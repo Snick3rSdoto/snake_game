@@ -1,3 +1,4 @@
+//main2
 #include <SFML/Graphics.hpp>
 #include "map.h"
 class Player{
@@ -55,7 +56,7 @@ int main()
         float time = clock.getElapsedTime().asMicroseconds();
         clock.restart();
         time = time/800;
-     
+      
         sf::Event event;
         while (window.pollEvent(event))
         {
