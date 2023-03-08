@@ -1,7 +1,25 @@
 #include <SFML/Graphics.hpp>
 #include "map.h"
+//#include "view.h"
 #include <iostream>
-class Player {
+#define speedSnake 0.05
+
+// class BlueBox {
+//     float dx, dy, x, y, speed;
+//     int w, h;
+//     sf::Texture texture;
+//     sf::Sprite sprite;
+//     sf::String name;
+//     BlueBox (sf::Image &image, float X, float Y, int W, int H, sf::String Name){
+//         x = X; y = Y; w = W; h = H; name = Name;
+//         speed = 0; dx = 0; dy = 0;
+//         texture.loadFromImage(image);
+//         sprite.setTexture(texture);
+//         //sprite.setOrigin(w / 2, h / 2);
+//     }
+// };
+
+class Player{
     public:
     float x, y, w, h, dx, dy, speed = 0;
     int dir = 0;
@@ -31,8 +49,12 @@ void update(float time){
 }
  int getDx() {return dx;}
 };
+
 int main(){
     sf::RenderWindow window(sf::VideoMode(1280, 800), "SFML works!"); //W,H
+    //view.reset(sf::FloatRect(0,0,640,400));
+
+
 
     sf::Image map_image;
     map_image.loadFromFile("images/map.png");
@@ -41,12 +63,11 @@ int main(){
     sf::Sprite s_map;
     s_map.setTexture(map);
 
-    Player p("snake.png", 641, 385, 31.0, 31.0);
+    Player p("snake.png", 641, 385, 30.0, 30.0);
     sf::Clock clock;
 
     bool turnLeft = false, turnRight=false, turnUp=false, turnDown=false;
-    float blokTurnX = 0;
-    float blokTurnY = 0;
+        float blockTurn = 0;
     while (window.isOpen()){
  
         float time = clock.getElapsedTime().asMicroseconds();
@@ -58,13 +79,26 @@ int main(){
             if (event.type == sf::Event::Closed)
             window.close();
 }
+
+    blockTurn += speedSnake*time;
+
     int getX = p.x;
     int getY = p.y;
   
-    blokTurnX += 0.05*time;
-    blokTurnY += 0.05*time;
+    float blockTurnX2 = float(getX)/32;
+    float blockTurnY2 = float(getY)/32;
 
-    //std::cout<<getX<<'\t'<<getY<<'\t'<<turnLeft<<'\t'<<turnRight<<'\t'<<turnUp<<'\t'<<turnDown<<'\t'<<blokTurnX<<'\t'<<blokTurnY<<'\n';
+    float blockTurnX = blockTurnX2 - int(blockTurnX2);
+    float blockTurnY = blockTurnY2 - int(blockTurnY2);
+
+    float check = 0.03125;
+    if(p.dir==0){check = 0.03125;}
+    if(p.dir==1){check = 0;}
+    if(p.dir==2){check = 0.03125;}
+    if(p.dir==3){check = 0;}
+
+
+    //std::cout<<getX<<'\t'<<getY<<'\t'<<turnLeft<<'\t'<<turnRight<<'\t'<<turnUp<<'\t'<<turnDown<<'\t'<<blockTurnX<<"   "<<blockTurnY<<"   "<<blockTurn<<'\n';
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
         if(p.dir!=0 || turnDown || turnUp)
@@ -84,30 +118,31 @@ int main(){
     }
 
 
-        if(turnLeft && p.dir!=0 && getY%32==1 && blokTurnX>20){
-            p.dir = 1; p.speed = 0.05; 
+        if(turnLeft && p.dir!=0 && blockTurnY==check && blockTurn>1){
+            p.dir = 1; p.speed = speedSnake; 
             turnLeft = false;
-            blokTurnY = 0;
+            blockTurn = 0;
         }
-        if(turnRight && p.dir!=1 && getY%32==1 && blokTurnX>20){
-            p.dir = 0; p.speed = 0.05; 
+        if(turnRight && p.dir!=1 && blockTurnY==check && blockTurn>1){
+            p.dir = 0; p.speed = speedSnake; 
             turnRight = false;
-            blokTurnY = 0;
+            blockTurn = 0;
         }
-        if(turnUp && p.dir!=2 && getX%32==1 && blokTurnY>20){
-            p.dir = 3; p.speed = 0.05; 
+        if(turnUp && p.dir!=2 && blockTurnX==check && blockTurn>1){
+            p.dir = 3; p.speed = speedSnake; 
             turnUp = false;
-            blokTurnX = 0;
+            blockTurn = 0;
         }
-        if(turnDown && p.dir!=3 && getX%32==1 && blokTurnY>20){
-            p.dir = 2; p.speed = 0.05; 
+        if(turnDown && p.dir!=3 && blockTurnX==check && blockTurn>1){
+            p.dir = 2; p.speed = speedSnake; 
             turnDown = false;
-            blokTurnX = 0;
+            blockTurn = 0;
         }
-
+    //camera(p.x, p.y);
+    //camera();
 
     p.update(time);
-
+    //window.setView(view);
     window.clear();
 
     for (int i = 0; i< HEIGHT_MAP; ++i){
