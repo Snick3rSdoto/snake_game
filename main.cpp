@@ -6,13 +6,13 @@
 #include <list>
 #define speedSnake 0.05
 
-
-class BlueBox {
-public:
 struct Point{
     float x;
     float y;
 }po[1000];
+class BlueBox {
+public:
+
     float dx, dy, speed;
     int w, h;
     sf::Texture texture;
@@ -34,11 +34,22 @@ public:
         po[1].x = X; po[1].y = Y;
     }
 void update(float time) {
-    if(po[1].x<po[0].x) {po[1].x+=speedSnake*time;}
-    else if(po[1].x>po[0].x) {po[1].x-=speedSnake*time;}
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)||sf::Keyboard::isKeyPressed(sf::Keyboard::D) ||
+        sf::Keyboard::isKeyPressed(sf::Keyboard::W)||sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+        speed = speedSnake;
+    }
     
-    sprite.setPosition(po[1].x,po[1].y);
-    //std::cout<<po[1].x<<"  "<<po[0].x<<'\n';
+    // int plus;
+    // if(po[1].x<(po[0].x+4) && speed>0) {po[1].x+=speed*time; plus = 0; std::cout<<"1\t";}
+    // else if(po[1].x>(po[0].x+5)&& speed>0) {po[1].x-=speed*time; plus = 0;std::cout<<"2\t";}
+    // else {plus = 1; std::cout<<"5\t";}
+
+    // if(po[1].y<po[0].y+4 && plus>=1 && speed>0) {po[1].y+=speed*time; plus = 2;std::cout<<"3\n";}
+    // else if(po[1].y>po[0].y+5 && plus>=1 && speed>0) {po[1].y-=speed*time; plus = 2; std::cout<<"4\n";}
+    // else {plus = 1; std::cout<<"6\t";}
+
+    // sprite.setPosition(po[1].x,po[1].y);
+    //std::cout<<'\t'<<plus<<'\t'<<speed<<'\t'<<po[1].x<<'\t'<<po[0].x<<'\t'<<po[1].y<<'\t'<<po[0].y<<'\n';
 }
 };
 
@@ -168,7 +179,6 @@ int main(){
         box.push_back(new Tail(tailImage, 646-32*i, 390, 20,20));
     }
         bool flag = true;
-
     while (window.isOpen()){
  
         float time = clock.getElapsedTime().asMicroseconds();
