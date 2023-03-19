@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
-#define speedSnake 0.1
+#define speedSnake 0.05
 
 struct Point
 {
@@ -27,7 +27,6 @@ public:
         dy = 0;
         texture.loadFromImage(image);
         sprite.setTexture(texture);
-        std::cout << "ABOBA\n";
         // sprite.setOrigin(w / 2, h / 2);
     }
     virtual void update(float time) = 0;
@@ -35,6 +34,7 @@ public:
 
 class Tail : public BlueBox
 {
+    int plus;
 public:
     Tail(sf::Image &image, float X, float Y, int W, int H) : BlueBox(image, X, Y, W, H)
     {
@@ -45,49 +45,42 @@ public:
 
     void update(float time)
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::D) ||
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::D) ||
             sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
         {
             speed = speedSnake;
         }
 
-        // int plus;
-        // if(po[1].x<(po[0].x+4) && speed>0) {po[1].x+=speed*time; plus = 0; std::cout<<"1\t";}
-        // else if(po[1].x>(po[0].x+5)&& speed>0) {po[1].x-=speed*time; plus = 0;std::cout<<"2\t";}
-        // else {plus = 1; std::cout<<"5\t";}
+        if((int)po[1].x<(int)po[0].x+5 && plus <=1 && speed>0) {po[1].x+=speed*time; plus = 0; //std::cout<<"1\t\n";
+        }
+        else if((int)po[1].x>(int)po[0].x+5 && plus <=1 && speed>0) {po[1].x-=speed*time; plus = 0;//std::cout<<"2\t\n";
+        }
+        else {plus = 1; //std::cout<<"5\t\n";
+        }
 
-        // if(po[1].y<po[0].y+4 && plus>=1 && speed>0) {po[1].y+=speed*time; plus = 2;std::cout<<"3\n";}
-        // else if(po[1].y>po[0].y+5 && plus>=1 && speed>0) {po[1].y-=speed*time; plus = 2; std::cout<<"4\n";}
-        // else {plus = 1; std::cout<<"6\t";}
+        if((int)po[1].y<(int)po[0].y+5 && plus>=1 && speed>0) {po[1].y+=speed*time; plus = 2;//std::cout<<"3\n";
+        }
+        else if((int)po[1].y>(int)po[0].y+5 && plus>=1 && speed>0) {po[1].y-=speed*time; plus = 2; //std::cout<<"4\n";
+        }
+        else {plus = 1; //std::cout<<"6\t\n";
+        }
 
         sprite.setPosition(po[1].x, po[1].y);
-        // std::cout<<'\t'<<plus<<'\t'<<speed<<'\t'<<po[1].x<<'\t'<<po[0].x<<'\t'<<po[1].y<<'\t'<<po[0].y<<'\n';
+        //std::cout<<'\t'<<plus<<'\t'<<speed<<'\t'<<po[1].x<<'\t'<<po[0].x<<'\t'<<po[1].y<<'\t'<<po[0].y<<'\n';
     }
 };
 
 class Head : public BlueBox
 {
 public:
-    // float x, y, w, h, dx, dy, speed = 0;
     bool turnLeft = false, turnRight = false, turnUp = false, turnDown = false;
     float blockTurn = 0;
     int dir = 0;
-    // sf::String File;
-    // sf::Image image;
-    // sf::Texture texture;
-    // sf::Sprite sprite;
     Head(sf::Image &image, float X, float Y, int W, int H) : BlueBox(image, X, Y, W, H)
     {
         sprite.setTextureRect(sf::IntRect(w, h, w, h));
         po[0].x = X;
         po[0].y = Y;
-        // File = F;
-        //  w = W; h = H;
-        //  image.loadFromFile("images/" + File);
-        //  texture.loadFromImage(image);
-        //  sprite.setTexture(texture);
-        //  x = X; y = Y;
-        //  sprite.setTextureRect(sf::IntRect(w,h,w,h));
     }
     void control(float time)
     {
@@ -241,23 +234,23 @@ int main()
         time = time / 800;
 
         sf::Event event;
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)){
             if (event.type == sf::Event::Closed)
                 window.close();
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))
         {
-            if (flag)
-            {
+            if (flag){
                 size++;
-                box.push_back(new Tail(tailImage, po[size - 1].x, po[size - 1].y, 20, 20));
+                box.push_back(new Tail(tailImage, po[size -1].x+5, po[size -1].y+5, 20, 20));
+                //std::cout<<po[size -1].x<<"X   "<<po[size -1].y<<"Y\n";
+                //std::cout<<po[0].x<<"    "<<po[0].y<<"   "<<po[1].x<<"  "<<po[1].y<<'\n';
+                std::cout<<p.speed<<"   "<<time<<'\n';
                 flag = false;
             }
         }
-        else
-        {
+        else{
             flag = true;
         }
         // std::cout<<size<<'\n';
@@ -298,6 +291,7 @@ int main()
             window.draw((*it)->sprite);
         }
         window.display();
+
     }
 
     return 0;
