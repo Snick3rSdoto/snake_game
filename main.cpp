@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <list>
+#include <sstream>
 #define speedSnake 0.05
 
 struct Point
@@ -34,8 +35,14 @@ public:
 
 class Tail : public BlueBox
 {
-    int plus;
+
+    int plus = 1;
+    bool flagX = true, flagY;
+
+    
 public:
+    static int stopSpeedSnake;
+
     Tail(sf::Image &image, float X, float Y, int W, int H) : BlueBox(image, X, Y, W, H)
     {
         sprite.setTextureRect(sf::IntRect(w, h, w, h));
@@ -45,37 +52,63 @@ public:
 
     void update(float time)
     {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::D) ||
-            sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-        {
-            speed = speedSnake;
-        }
+        if(stopSpeedSnake == 1) {
+            
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::S) ||
+            sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+                speed = speedSnake;
+                }
 
-        if((int)po[1].x<(int)po[0].x+5 && plus <=1 && speed>0) {po[1].x+=speed*time; plus = 0; //std::cout<<"1\t\n";
-        }
-        else if((int)po[1].x>(int)po[0].x+5 && plus <=1 && speed>0) {po[1].x-=speed*time; plus = 0;//std::cout<<"2\t\n";
-        }
-        else {plus = 1; //std::cout<<"5\t\n";
-        }
+        if((int)po[1].x < (int)po[0].x + 5 && plus <= 1) {po[1].x+=speed*time; plus = 0;}
+        else if((int)po[1].x>(int)po[0].x+5 && plus <=1) {po[1].x-=speed*time; plus = 0;}
+        else {plus = 1;}
 
-        if((int)po[1].y<(int)po[0].y+5 && plus>=1 && speed>0) {po[1].y+=speed*time; plus = 2;//std::cout<<"3\n";
+        if((int)po[1].y < (int)po[0].y + 5 && plus >=1 ) {po[1].y+=speed*time; plus = 2;}
+        else if((int)po[1].y>(int)po[0].y+5 && plus >=1) {po[1].y-=speed*time; plus = 2;}
+        else {plus = 1;}
         }
-        else if((int)po[1].y>(int)po[0].y+5 && plus>=1 && speed>0) {po[1].y-=speed*time; plus = 2; //std::cout<<"4\n";
-        }
-        else {plus = 1; //std::cout<<"6\t\n";
-        }
-
+        // if (plus<=1 && flagX){
+        // if((int)po[1].x<(int)po[0].x-27) {po[1].x+=speed*time+speed/20; plus = 0; std::cout<<"1\n";}
+        // else if((int)po[1].x>(int)po[0].x+37) {po[1].x-=speed*time+speed/20; plus = 0; std::cout<<"2\n";
+        // }
+        // else if (((int)po[1].y>(int)po[0].y+6 || (int)po[1].y<(int)po[0].y+3) && (int)po[1].x<(int)po[0].x+5) {
+        //     po[1].x+=speed*time+speed/5; plus = 0; flagY = true; std::cout<<"3=\n";
+        //     }
+        // else if (((int)po[1].y>(int)po[0].y+6 || (int)po[1].y<(int)po[0].y+3) && (int)po[1].x>(int)po[0].x+5) {
+        //     po[1].x-=speed*time+speed/5; plus = 0; flagY = true; std::cout<<"4\n";
+        //     }
+        // else if(!flagY) {flagX = true;  std::cout<<"flagX\n";}
+        // else {plus = 2;  flagX = false; std::cout<<"5\n";}
+        // }
+        //
+        //
+        //
+        // if (plus>=1 && flagY){
+        // if((int)po[1].y<(int)po[0].y-27) {po[1].y+=speed*time+speed/20; plus = 2; std::cout<<"6\n";}
+        // else if((int)po[1].y>(int)po[0].y+37) {po[1].y-=speed*time+speed/20; plus = 2; std::cout<<"7\n";
+        // }
+        // else if(((int)po[1].x>(int)po[0].x+6 || (int)po[1].x<(int)po[0].x+3) && (int)po[1].y<(int)po[0].y+5) {
+        //     po[1].y+=speed*time+speed/5; plus = 2; flagX = true; std::cout<<"8\n";
+        //     }
+        // else if(((int)po[1].x>(int)po[0].x+6 || (int)po[1].x<(int)po[0].x+3) && (int)po[1].y>(int)po[0].y+5) {
+        //     po[1].y-=speed*time+speed/5; plus = 2; flagX = true; std::cout<<"9\n";
+        //     }
+        // else if(!flagX) {flagY = true;  std::cout<<"flagY\n";}
+        // else {plus = 0;  flagY = false; std::cout<<"0\n";}
+        // }
+        
         sprite.setPosition(po[1].x, po[1].y);
+        
         //std::cout<<'\t'<<plus<<'\t'<<speed<<'\t'<<po[1].x<<'\t'<<po[0].x<<'\t'<<po[1].y<<'\t'<<po[0].y<<'\n';
     }
+    
 };
-
-class Head : public BlueBox
-{
+    int Tail::stopSpeedSnake = 1;
+class Head : public BlueBox {
 public:
     bool turnLeft = false, turnRight = false, turnUp = false, turnDown = false;
     float blockTurn = 0;
-    int dir = 0;
+    int dir = 0, playerScore = 0;
     Head(sf::Image &image, float X, float Y, int W, int H) : BlueBox(image, X, Y, W, H)
     {
         sprite.setTextureRect(sf::IntRect(w, h, w, h));
@@ -96,22 +129,8 @@ public:
         float blockTurnY = blockTurnY2 - int(blockTurnY2);
 
         float check = 0.03125;
-        if (dir == 0)
-        {
-            check = 0.03125;
-        }
-        if (dir == 1)
-        {
-            check = 0;
-        }
-        if (dir == 2)
-        {
-            check = 0.03125;
-        }
-        if (dir == 3)
-        {
-            check = 0;
-        }
+        if (dir == 0 || dir == 2) {check = 0.03125;}
+        if (dir == 1 || dir == 3) {check = 0;}
 
         // std::cout<<getX<<'\t'<<getY<<'\t'<<turnLeft<<'\t'<<turnRight<<'\t'<<turnUp<<'\t'<<turnDown<<'\t'<<blockTurnX<<"   "<<blockTurnY<<"   "<<blockTurn<<'\n';
 
@@ -166,8 +185,8 @@ public:
         }
     }
 
-    void update(float time)
-    {
+    void update(float time){
+        touchWall();
         switch (dir)
         {
         case 0:
@@ -191,15 +210,39 @@ public:
         po[0].y += dy * time;
         sprite.setPosition(po[0].x, po[0].y);
     }
+
     int getDx() { return dx; }
+
+    void touchWall() {
+        for (int i = po[0].y / 32; i<(po[0].y + h) / 32; ++i)
+        for (int j = po[0].x / 32; j<(po[0].x + w) / 32; ++j){
+            if (TileMap[i][j] == '0') {speed = 0;}
+            if (TileMap[i][j] == 'F') {
+                TileMap[i][j] = ' ';    randomMapGenerate2();
+                playerScore++;
+            }
+        }
+    }
 };
 
-int main()
-{
-    sf::RenderWindow window(sf::VideoMode(1280, 800), "SFML works!"); // W,H
+int main() {
+
+    randomMapGenerate();
+
+    sf::RenderWindow window(sf::VideoMode(1480, 800), "SFML works!"); // W,H
     // view.reset(sf::FloatRect(0,0,640,400));
 
+    sf::Font font;
+    font.loadFromFile("../images/shrift.ttf");
+    sf::Text text("", font, 20); //size font pixel
+    text.setFillColor(sf::Color::Green);  //почему работает setFillColor && setColor но второй вариант подсвечивается?
+    // text.setStyle(sf::Text::Bold);
+
+
+    sf::Color Color;
+
     sf::Image map_image;
+
     map_image.loadFromFile("../images/map.png");
     sf::Texture map;
     map.loadFromImage(map_image);
@@ -213,7 +256,7 @@ int main()
     tailImage.loadFromFile("../images/snake.png");
 
     Head p(heroImage, 641, 385, 30, 30);
-    // Tail t(tailImage, 614, 390, 20, 20);
+    Tail t(tailImage, 0, 0, 0, 0);
 
     sf::Clock clock;
 
@@ -238,7 +281,9 @@ int main()
             if (event.type == sf::Event::Closed)
                 window.close();
         }
-
+        if (p.speed == 0){t.stopSpeedSnake = 0;}
+        else {t.stopSpeedSnake = 1;}
+        
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::F))
         {
             if (flag){
@@ -246,16 +291,11 @@ int main()
                 box.push_back(new Tail(tailImage, po[size -1].x+5, po[size -1].y+5, 20, 20));
                 //std::cout<<po[size -1].x<<"X   "<<po[size -1].y<<"Y\n";
                 //std::cout<<po[0].x<<"    "<<po[0].y<<"   "<<po[1].x<<"  "<<po[1].y<<'\n';
-                std::cout<<p.speed<<"   "<<time<<'\n';
+                //std::cout<<p.speed<<"   "<<time<<'\n';
                 flag = false;
             }
         }
-        else{
-            flag = true;
-        }
-        // std::cout<<size<<'\n';
-
-        // if (*po[1].x!=po[0].x) {po[1]+=speedSnake;}
+        else {  flag = true;}
 
         // camera(p.x, p.y);
         // camera();
@@ -284,6 +324,12 @@ int main()
                 window.draw(s_map);
             }
         }
+        std::ostringstream playerScoreString;
+        playerScoreString << p.playerScore;
+        text.setString("Score: " + playerScoreString.str());
+        text.setPosition(1290, 6);
+
+        window.draw(text);
         window.draw(p.sprite);
         // window.draw(t.sprite);
         for (it = box.begin(); it != box.end(); ++it)
